@@ -31,7 +31,6 @@ function addNewCategory(label) {
             }
             else {
                 const newCategory = {
-                    id: res[0].insertId,
                     label
                 };
                 resolve(newCategory);

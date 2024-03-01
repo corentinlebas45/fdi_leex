@@ -36,7 +36,6 @@ function addNewProduct(category_id, label, qte, image, description, price) {
             }
             else {
                 const newProduct = {
-                    id: res[0].insertId,
                     category_id,
                     label,
                     qte,

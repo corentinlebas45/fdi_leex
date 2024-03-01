@@ -2,7 +2,6 @@ import { db } from "../db";
 import { RowDataPacket } from "mysql2";
 
 export interface Product {
-  id: number;
   category_id: number;
   label: string;
   qte: number;
@@ -45,7 +44,6 @@ export function addNewProduct(category_id: number, label: string, qte: number, i
         reject(error);
       } else {
         const newProduct = {
-          id: res[0].insertId,
           category_id,
           label,
           qte,
@@ -105,6 +103,6 @@ export function delProduct(productId: number): Promise<boolean> {
 export function getProductById(productId: number): Promise<Product | null> {
   return new Promise((resolve, reject) => {
     const sqlQuery = `SELECT * FROM product WHERE id = ${productId};`;
-    
+      
   })
 }

@@ -2,7 +2,6 @@ import { db } from "../db";
 import { RowDataPacket } from "mysql2";
 
 export interface Category {
-    id: number;
     label: string;
 }
 
@@ -35,7 +34,6 @@ export function addNewCategory(label: string): Promise<Category> {
                 reject(error);
             } else {
                 const newCategory = {
-                    id: res[0].insertId,
                     label
                 };
                 resolve(newCategory);
