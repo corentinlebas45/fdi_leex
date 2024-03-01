@@ -29,18 +29,23 @@ export function getAllUsers(): Promise<User[]> {
 
 export function createUser(email: string, password: string): Promise<User> {
   return new Promise((resolve, reject) => {
-    const sqlQuery = `INSERT INTO user (email, password) VALUES ('${email}', '${password}');`;
+    const sqlQuery = `INSERT INTO user (email, password, roles) VALUES ('${email}', '${password}', '["ROLE_USER"]');`;
 
     db.query(sqlQuery, (error: any, res: RowDataPacket[]) => {
       if (error) {
         console.error(error);
         reject(error);
       } else {
-        const newUser = {
-          email,
-          password,
-        };
-        resolve(newUser);
+        db.query(`SELECT * FROM user WHERE email = ${email}`, (error: any, res: RowDataPacket[]) => {
+          const users = res.map(row => ({
+            id: row.id,
+            email: row.email,
+            password: row.password,
+            role: row.role
+          })
+          );
+          resolve(users[0]);
+        });
       }
     });
   });

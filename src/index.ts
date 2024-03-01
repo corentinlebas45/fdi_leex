@@ -2,6 +2,8 @@ import express, { NextFunction, Request, Response } from 'express';
 import {getUserByEmail} from './models/User';
 import userRoutes from './routes/userRoute';
 import productRoutes from './routes/productRoute';
+import categoryRoutes from './routes/categoryRoute';
+import basketProductRoutes from './routes/BasketProductRoute';
 import bodyParser from "body-parser";
 import mysql, { MysqlError } from 'mysql';
 const jwt = require('jsonwebtoken')
@@ -36,13 +38,15 @@ app.use(urlencodedParser);
 
 
 app.post('/login', (req : Request, res: Response, next: NextFunction) => {
-  console.log( req.body);
+  console.log(req.body);
   next();
 })
 
 
 app.use('/api/users', userRoutes);
 app.use('/api/products', productRoutes);
+app.use('/api/basket', basketProductRoutes);
+app.use('/api/category', categoryRoutes);
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
