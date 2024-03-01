@@ -3,7 +3,7 @@ import {getUserByEmail} from './models/User';
 import userRoutes from './routes/userRoute';
 import productRoutes from './routes/productRoute';
 import categoryRoutes from './routes/categoryRoute';
-import basketProductRoutes from './routes/BasketProductRoute';
+import basketRoutes from './routes/basketProductRoute';
 import bodyParser from "body-parser";
 import mysql, { MysqlError } from 'mysql';
 const jwt = require('jsonwebtoken')
@@ -45,7 +45,7 @@ app.post('/login', (req : Request, res: Response, next: NextFunction) => {
 
 app.use('/api/users', userRoutes);
 app.use('/api/products', productRoutes);
-app.use('/api/basket', basketProductRoutes);
+app.use('/api/basket', basketRoutes);
 app.use('/api/category', categoryRoutes);
 
 app.listen(port, () => {

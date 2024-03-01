@@ -27,11 +27,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const userController = __importStar(require("../controllers/UserController"));
+const basketController = __importStar(require("../controllers/BasketProductController"));
 const router = express_1.default.Router();
-router.get('/', userController.getAllUsersController);
-router.post('/', userController.createUserController);
-router.delete('/:id', userController.delUserController);
-router.put('/:id', userController.updateUserController);
-router.get('/:id', userController.getUserByEmailController);
+router.get('/', basketController.getAllBasketProductController);
+router.post('/', basketController.addNewBasketProductController);
+router.delete('/:id', basketController.delBasketProductController);
+router.put('/:id', basketController.updateBasketProductController);
+router.get('/:id', basketController.getBasketProductByIdController);
 exports.default = router;

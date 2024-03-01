@@ -1,10 +1,16 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getUserByEmailController = exports.updateUserController = exports.delUserController = exports.getAllUsersController = exports.createUserController = void 0;
 const User_1 = require("../models/User");
-exports.createUser = async (req, res) => {
-    const { username, password, role_id } = req.body;
+const createUserController = async (req, res) => {
+    console.log(req.body);
+    if (!req.body || !req.body.email || !req.body.password) {
+        return res.status(400).json({ message: 'Email et mot de passe requis.' });
+    }
+    const email = req.body.email;
+    const password = req.body.password;
     try {
-        const newUser = await (0, User_1.createUser)(username, password, role_id);
+        const newUser = await (0, User_1.createUser)(email, password);
         res.status(201).json(newUser);
     }
     catch (error) {
@@ -12,7 +18,8 @@ exports.createUser = async (req, res) => {
         res.status(500).json({ message: 'Erreur lors de la création d\'un nouvel utilisateur.' });
     }
 };
-exports.getAllUsers = async (req, res) => {
+exports.createUserController = createUserController;
+const getAllUsersController = async (req, res) => {
     try {
         const users = await (0, User_1.getAllUsers)();
         res.json(users);
@@ -22,7 +29,8 @@ exports.getAllUsers = async (req, res) => {
         res.status(500).json({ message: 'Erreur lors de la récupération des utilisateurs.' });
     }
 };
-exports.delUser = async (req, res) => {
+exports.getAllUsersController = getAllUsersController;
+const delUserController = async (req, res) => {
     const userId = parseInt(req.params.id);
     try {
         const result = await (0, User_1.delUser)(userId);
@@ -38,11 +46,12 @@ exports.delUser = async (req, res) => {
         res.status(500).json({ message: 'Erreur lors de la suppression de l\'utilisateur.' });
     }
 };
-exports.updateUser = async (req, res) => {
+exports.delUserController = delUserController;
+const updateUserController = async (req, res) => {
     const userId = parseInt(req.params.id);
-    const { username, password, role_id } = req.body;
+    const { email, password, role_id } = req.body;
     try {
-        const updatedUser = await (0, User_1.updateUser)(userId, username, password, role_id);
+        const updatedUser = await (0, User_1.updateUser)(userId, email, password, role_id);
         if (updatedUser) {
             res.json(updatedUser);
         }
@@ -55,10 +64,11 @@ exports.updateUser = async (req, res) => {
         res.status(500).json({ message: 'Erreur lors de la mise à jour de l\'utilisateur.' });
     }
 };
-exports.getUserById = async (req, res) => {
-    const userId = parseInt(req.params.id);
+exports.updateUserController = updateUserController;
+const getUserByEmailController = async (req, res) => {
+    const email = req.params.email;
     try {
-        const user = await (0, User_1.getUserById)(userId);
+        const user = await (0, User_1.getUserByEmail)(email);
         if (user) {
             res.json(user);
         }
@@ -71,3 +81,4 @@ exports.getUserById = async (req, res) => {
         res.status(500).json({ message: 'Erreur lors de la recherche de l\'utilisateur.' });
     }
 };
+exports.getUserByEmailController = getUserByEmailController;

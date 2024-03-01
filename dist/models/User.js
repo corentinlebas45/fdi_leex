@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUserById = exports.updateUser = exports.delUser = exports.createUser = exports.getAllUsers = void 0;
+exports.getUserByEmail = exports.updateUser = exports.delUser = exports.createUser = exports.getAllUsers = void 0;
 const db_1 = require("../db");
 function getAllUsers() {
     return new Promise((resolve, reject) => {
@@ -13,9 +13,9 @@ function getAllUsers() {
             else {
                 const users = res.map(row => ({
                     id: row.id,
-                    username: row.username,
+                    email: row.email,
                     password: row.password,
-                    role_id: row.role_id
+                    role: row.role
                 }));
                 resolve(users);
             }
@@ -23,22 +23,24 @@ function getAllUsers() {
     });
 }
 exports.getAllUsers = getAllUsers;
-function createUser(username, password, role_id) {
+function createUser(email, password) {
     return new Promise((resolve, reject) => {
-        const sqlQuery = `INSERT INTO user (username, password, role_id) VALUES ('${username}', '${password}', ${role_id});`;
+        const sqlQuery = `INSERT INTO user (email, password, roles) VALUES ('${email}', '${password}', '["ROLE_USER"]');`;
         db_1.db.query(sqlQuery, (error, res) => {
             if (error) {
                 console.error(error);
                 reject(error);
             }
             else {
-                const newUser = {
-                    id: res[0].insertId,
-                    username,
-                    password,
-                    role_id
-                };
-                resolve(newUser);
+                db_1.db.query(`SELECT * FROM user WHERE email = ${email}`, (error, res) => {
+                    const users = res.map(row => ({
+                        id: row.id,
+                        email: row.email,
+                        password: row.password,
+                        role: row.role
+                    }));
+                    resolve(users[0]);
+                });
             }
         });
     });
@@ -59,9 +61,9 @@ function delUser(userId) {
     });
 }
 exports.delUser = delUser;
-function updateUser(userId, username, password, role_id) {
+function updateUser(userId, email, password, role) {
     return new Promise((resolve, reject) => {
-        const sqlQuery = `UPDATE user SET username = '${username}', password = '${password}', role_id = ${role_id} WHERE id = ${userId};`;
+        const sqlQuery = `UPDATE user SET email = '${email}', password = '${password}', role = ${role} WHERE id = ${userId};`;
         db_1.db.query(sqlQuery, (error, res) => {
             if (error) {
                 console.error(error);
@@ -71,9 +73,9 @@ function updateUser(userId, username, password, role_id) {
                 if (res.changedRows > 0) {
                     const updatedUser = {
                         id: userId,
-                        username,
+                        email,
                         password,
-                        role_id
+                        role
                     };
                     resolve(updatedUser);
                 }
@@ -85,9 +87,9 @@ function updateUser(userId, username, password, role_id) {
     });
 }
 exports.updateUser = updateUser;
-function getUserById(userId) {
+function getUserByEmail(email) {
     return new Promise((resolve, reject) => {
-        const sqlQuery = `SELECT * FROM user WHERE id = ${userId};`;
+        const sqlQuery = `SELECT * FROM user WHERE email = ${email};`;
         db_1.db.query(sqlQuery, (error, res) => {
             if (error) {
                 console.error(error);
@@ -97,9 +99,9 @@ function getUserById(userId) {
                 if (res.length > 0) {
                     const user = {
                         id: res[0].id,
-                        username: res[0].username,
+                        email: res[0].email,
                         password: res[0].password,
-                        role_id: res[0].role_id
+                        role: res[0].role
                     };
                     resolve(user);
                 }
@@ -110,4 +112,4 @@ function getUserById(userId) {
         });
     });
 }
-exports.getUserById = getUserById;
+exports.getUserByEmail = getUserByEmail;

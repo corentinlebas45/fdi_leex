@@ -6,8 +6,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const userRoute_1 = __importDefault(require("./routes/userRoute"));
 const productRoute_1 = __importDefault(require("./routes/productRoute"));
+const categoryRoute_1 = __importDefault(require("./routes/categoryRoute"));
+const basketProductRoute_1 = __importDefault(require("./routes/basketProductRoute"));
+const body_parser_1 = __importDefault(require("body-parser"));
 const mysql_1 = __importDefault(require("mysql"));
-var { expressjwt: jwt } = require("express-jwt");
+const jwt = require('jsonwebtoken');
 const secret = 'cle_secrete_de_fou';
 const app = (0, express_1.default)();
 const port = 3000;
@@ -24,22 +27,19 @@ db.connect((err) => {
     }
     console.log('Connected to MySQL');
 });
-app.use(jwt({ secret, algorithms: ['HS256'] }).unless({ path: ['/login'] }));
-app.use((err, req, res, next) => {
-    if (err.name === 'UnauthorizedError') {
-        res.status(401).json({ message: 'Token JWT invalide' });
-    }
-    else {
-        next();
-    }
-});
-app.post('/login', (req, res) => {
-    const { username, password } = req.body;
-    const token = jwt.sign({ username }, secret, { expiresIn: '1h' });
-    res.json({ token });
+// app.use(jwt({ secret, algorithms: ['HS256'] }).unless({ path: ['/login'] }));
+const jsonParser = body_parser_1.default.json();
+const urlencodedParser = body_parser_1.default.urlencoded({ extended: true });
+app.use(jsonParser);
+app.use(urlencodedParser);
+app.post('/login', (req, res, next) => {
+    console.log(req.body);
+    next();
 });
 app.use('/api/users', userRoute_1.default);
 app.use('/api/products', productRoute_1.default);
+app.use('/api/basket', basketProductRoute_1.default);
+app.use('/api/category', categoryRoute_1.default);
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
 });
