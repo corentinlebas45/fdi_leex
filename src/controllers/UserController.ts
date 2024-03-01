@@ -1,6 +1,14 @@
 
-import express, { Request, Response } from 'express';
-import { getAllUsers, createUser, delUser, updateUser, getUserByEmail } from '../models/User';
+import express, { NextFunction, Request, Response } from 'express';
+import { getAllUsers, createUser, delUser, updateUser, getUserByEmail, loginCheck, User } from '../models/User';
+const dotenv = require('dotenv');
+const jwt = require("jsonwebtoken");
+dotenv.config();
+
+
+function generateAccessToken(user: User){
+    return jwt.sign(user, process.env.TOKEN_SECRET, { expiresIn: '1800s' });
+}
 
 const createUserController = async (req: Request, res: Response) => {
     console.log(req.body);
@@ -76,4 +84,28 @@ const getUserByEmailController = async (req: Request, res: Response) => {
     }
 }
 
-export {createUserController, getAllUsersController, delUserController, updateUserController, getUserByEmailController}
+const loginUserController = async (req: Request, res: Response) => {
+    const { email, password } = req.body;
+    console.log(email, password);
+    try {
+        const check: boolean = await loginCheck(email, password);
+        console.log(check);
+        if (check) {
+            const user: User|null = await getUserByEmail(email);
+            if(user){
+                const token = generateAccessToken(user);
+                res.json({ "token": token });
+            }else{
+                res.status(401).json({ message: 'Email ou mot de passe incorrect.' });
+            }
+        } else {
+            res.status(401).json({ message: 'Email ou mot de passe incorrect.' });
+
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Erreur lors de la tentative de connexion.' });
+    }
+}
+
+export {createUserController, getAllUsersController, delUserController, updateUserController, getUserByEmailController, loginUserController}

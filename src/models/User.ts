@@ -2,8 +2,10 @@ import { db } from "../db";
 import { RowDataPacket } from "mysql2";
 
 export interface User {
+  id: number;
   email: string;
   password: string;
+  role: string;
 }
 
 export function getAllUsers(): Promise<User[]> {
@@ -37,7 +39,7 @@ export function createUser(email: string, password: string): Promise<User> {
         reject(error);
       } else {
         db.query(`SELECT * FROM user WHERE email = ${email}`, (error: any, res: RowDataPacket[]) => {
-          const users = res.map(row => ({
+          const users:User[] = res.map(row => ({
             id: row.id,
             email: row.email,
             password: row.password,
@@ -66,7 +68,7 @@ export function delUser(userId: number): Promise<boolean> {
   });
 }
 
-export function updateUser(userId: number, email: string, password: string, role: number): Promise<User | null> {
+export function updateUser(userId: number, email: string, password: string, role: string): Promise<User | null> {
   return new Promise((resolve, reject) => {
     const sqlQuery = `UPDATE user SET email = '${email}', password = '${password}', role = ${role} WHERE id = ${userId};`;
 
@@ -76,7 +78,7 @@ export function updateUser(userId: number, email: string, password: string, role
         reject(error);
       } else {
         if (res.changedRows > 0) {
-          const updatedUser = {
+          const updatedUser:User = {
             id: userId,
             email,
             password,
@@ -93,14 +95,14 @@ export function updateUser(userId: number, email: string, password: string, role
 
 export function getUserByEmail(email: string): Promise<User | null> {
   return new Promise((resolve, reject) => {
-    const sqlQuery = `SELECT * FROM user WHERE email = ${email};`;
+    const sqlQuery = `SELECT * FROM user WHERE email = '${email}';`;
     db.query(sqlQuery, (error: any, res: RowDataPacket[]) => {
       if (error) {
         console.error(error);
         reject(error);
       } else {
         if (res.length > 0) {
-          const user = {
+          const user:User  = {
             id: res[0].id,
             email: res[0].email,
             password: res[0].password,
@@ -109,6 +111,25 @@ export function getUserByEmail(email: string): Promise<User | null> {
           resolve(user);
         } else {
           resolve(null);
+        }
+      }
+    });
+  });
+}
+
+export function loginCheck(email: string, password: string): Promise<boolean> {
+  return new Promise((resolve, reject) => {
+    const sqlQuery = `SELECT * FROM user WHERE email = '${email}' AND password = '${password}';`;
+    console.log(sqlQuery);
+    db.query(sqlQuery, (error: any, res: RowDataPacket[]) => {
+      if (error) {
+        console.error(error);
+        reject(error);
+      } else {
+        if (res.length > 0) {
+          resolve(true);
+        } else {
+          resolve(false);
         }
       }
     });

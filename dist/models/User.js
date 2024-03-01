@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUserByEmail = exports.updateUser = exports.delUser = exports.createUser = exports.getAllUsers = void 0;
+exports.loginCheck = exports.getUserByEmail = exports.updateUser = exports.delUser = exports.createUser = exports.getAllUsers = void 0;
 const db_1 = require("../db");
 function getAllUsers() {
     return new Promise((resolve, reject) => {
@@ -89,7 +89,7 @@ function updateUser(userId, email, password, role) {
 exports.updateUser = updateUser;
 function getUserByEmail(email) {
     return new Promise((resolve, reject) => {
-        const sqlQuery = `SELECT * FROM user WHERE email = ${email};`;
+        const sqlQuery = `SELECT * FROM user WHERE email = '${email}';`;
         db_1.db.query(sqlQuery, (error, res) => {
             if (error) {
                 console.error(error);
@@ -113,3 +113,24 @@ function getUserByEmail(email) {
     });
 }
 exports.getUserByEmail = getUserByEmail;
+function loginCheck(email, password) {
+    return new Promise((resolve, reject) => {
+        const sqlQuery = `SELECT * FROM user WHERE email = '${email}' AND password = '${password}';`;
+        console.log(sqlQuery);
+        db_1.db.query(sqlQuery, (error, res) => {
+            if (error) {
+                console.error(error);
+                reject(error);
+            }
+            else {
+                if (res.length > 0) {
+                    resolve(true);
+                }
+                else {
+                    resolve(false);
+                }
+            }
+        });
+    });
+}
+exports.loginCheck = loginCheck;

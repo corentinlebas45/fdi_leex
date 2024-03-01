@@ -1,7 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUserByEmailController = exports.updateUserController = exports.delUserController = exports.getAllUsersController = exports.createUserController = void 0;
+exports.loginUserController = exports.getUserByEmailController = exports.updateUserController = exports.delUserController = exports.getAllUsersController = exports.createUserController = void 0;
 const User_1 = require("../models/User");
+const dotenv = require('dotenv');
+const jwt = require("jsonwebtoken");
+dotenv.config();
+function generateAccessToken(user) {
+    return jwt.sign(user, process.env.TOKEN_SECRET, { expiresIn: '1800s' });
+}
 const createUserController = async (req, res) => {
     console.log(req.body);
     if (!req.body || !req.body.email || !req.body.password) {
@@ -82,3 +88,29 @@ const getUserByEmailController = async (req, res) => {
     }
 };
 exports.getUserByEmailController = getUserByEmailController;
+const loginUserController = async (req, res) => {
+    const { email, password } = req.body;
+    console.log(email, password);
+    try {
+        const check = await (0, User_1.loginCheck)(email, password);
+        console.log(check);
+        if (check) {
+            const user = await (0, User_1.getUserByEmail)(email);
+            if (user) {
+                const token = generateAccessToken(user);
+                res.json({ "token": token });
+            }
+            else {
+                res.status(401).json({ message: 'Email ou mot de passe incorrect.' });
+            }
+        }
+        else {
+            res.status(401).json({ message: 'Email ou mot de passe incorrect.' });
+        }
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Erreur lors de la tentative de connexion.' });
+    }
+};
+exports.loginUserController = loginUserController;

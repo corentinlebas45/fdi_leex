@@ -13,5 +13,7 @@ router.put('/:id', userController.updateUserController);
 
 router.get('/:id', userController.getUserByEmailController);
 
+router.post('/login', userController.loginUserController);
+
 export default router;
  

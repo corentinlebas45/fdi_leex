@@ -34,4 +34,5 @@ router.post('/', userController.createUserController);
 router.delete('/:id', userController.delUserController);
 router.put('/:id', userController.updateUserController);
 router.get('/:id', userController.getUserByEmailController);
+router.post('/login', userController.loginUserController);
 exports.default = router;
