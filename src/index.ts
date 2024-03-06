@@ -1,9 +1,8 @@
-import express, { NextFunction, Request, Response } from 'express';
+import express from 'express';
 import userRoutes from './routes/userRoute';
 import productRoutes from './routes/productRoute';
 import categoryRoutes from './routes/categoryRoute';
 import basketRoutes from './routes/basketProductRoute';
-import bodyParser from "body-parser";
 import mysql, { MysqlError } from 'mysql';
 
 const app = express();
@@ -30,10 +29,6 @@ db.connect((err: MysqlError) => {
 });
 
 
-const jsonParser = bodyParser.json();
-const urlencodedParser = bodyParser.urlencoded({ extended: true });
-app.use(jsonParser);
-app.use(urlencodedParser);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

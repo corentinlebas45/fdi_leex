@@ -1,5 +1,5 @@
 
-import express, { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { getAllUsers, createUser, delUser, updateUser, getUserByEmail, loginCheck, User } from '../models/User';
 const dotenv = require('dotenv');
 const jwt = require("jsonwebtoken");
