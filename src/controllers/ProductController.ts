@@ -15,7 +15,6 @@ const getAllProductsController = async (req: Request, res: Response) => {
 
 
 const addNewProductController = async (req: Request, res: Response) => {
-    console.log("coucou",req.body);
     const { category_id, label, qte, image, description, price } = req.body;
     try {
         const newProduct = await addNewProduct(category_id, label, qte, image, description, price);
